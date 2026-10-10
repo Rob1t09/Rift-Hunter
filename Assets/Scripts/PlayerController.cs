@@ -6,8 +6,11 @@ public class PlayerController : MonoBehaviour
 {
     public float MoveSpeed = 5f;
     float YSpeed = 0f;
-    public float gravity = -15f;
-    
+    public float Gravity = -15f;
+
+    public float RotationSpeed = 10f; 
+
+
 
     CharacterController controller;
     InputAction moveAction;
@@ -29,13 +32,18 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            YSpeed += gravity * Time.deltaTime;
+            YSpeed += Gravity * Time.deltaTime;
         }
 
         Vector3 move = new Vector3(input.x, YSpeed, input.y);
 
         controller.Move(move * Time.deltaTime);
 
-        Console.WriteLine($"Move: {move}, YSpeed: {YSpeed}, IsGrounded: {controller.isGrounded}");
+        Vector3 TargetAngle = new Vector3(input.x, 0f, input.y);
+        if (TargetAngle.sqrMagnitude > 0.01f)
+        {
+            Quaternion cil = Quaternion.LookRotation(TargetAngle);
+            transform.rotation = Quaternion.Slerp(transform.rotation, cil, RotationSpeed * Time.deltaTime);
+        }
     }
 }
