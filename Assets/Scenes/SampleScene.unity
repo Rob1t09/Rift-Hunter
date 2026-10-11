@@ -246,7 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97e0af14956076042aaa0e3a05fd05cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  MaxHealth: 1000
+  maxHealth: 100
 --- !u!1 &69398289
 GameObject:
   m_ObjectHideFlags: 0
@@ -761,6 +761,7 @@ GameObject:
   - component: {fileID: 388087181}
   - component: {fileID: 388087183}
   - component: {fileID: 388087182}
+  - component: {fileID: 388087184}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -796,12 +797,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1e091b1bcaa4184fa0c2e1146d2fd21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  MoveSpeed: 5
-  Gravity: -15
-  RotationSpeed: 10
-  DodgeSpeed: 15
-  DodgeDuration: 0.25
-  DodgeBaseCooldown: 1
+  moveSpeed: 5
+  gravity: -15
+  rotationSpeed: 10
+  dodgeSpeed: 15
+  dodgeDuration: 0.25
+  dodgeBaseCooldown: 1
 --- !u!143 &388087183
 CharacterController:
   m_ObjectHideFlags: 0
@@ -827,6 +828,28 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &388087184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 388087180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72e457a022976a443b30d6906573a391, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
+  melee:
+    weaponName: Blade
+    range: 1
+    arc: 90
+    damage: 10
+    secondaryDamageMultiplier: 0.5
+    cooldown: 0.6
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0

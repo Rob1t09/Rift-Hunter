@@ -3,21 +3,21 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    public float MaxHealth = 100f;
-    float CurrentHealth;
+    public float maxHealth = 100f;
+    float currentHealth;
 
     void Awake()
     {
-        CurrentHealth = MaxHealth;
+        currentHealth = maxHealth;
     }
 
     public void TakeDamage(float damage)
     {
-        CurrentHealth -= damage;
-        Debug.Log($"Took damage: {damage}\nCurrent Health: {CurrentHealth}");
+        currentHealth -= damage;
+        Debug.Log($"Took damage: {damage}\nCurrent Health: {currentHealth}");
 
 
-        if (CurrentHealth <= 0)
+        if (currentHealth <= 0)
         {
             Debug.Log("Dummy is dead");
             Destroy(gameObject);

@@ -1,28 +1,24 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    
     [Header("Pohyb + gravitace")]
-    public float MoveSpeed = 5f;
+    public float moveSpeed = 5f;
     float YSpeed = 0f;
-    public float Gravity = -15f;
+    public float gravity = -15f;
 
     [Header("Rotace")]
-    public float RotationSpeed = 10f;
+    public float rotationSpeed = 10f;
 
-    [Header("dodge/úhyb")]
-    public float DodgeSpeed = 10f;
-    public float DodgeDuration = 1f;
-    public float DodgeBaseCooldown = 1f; //cooldown mezi úhyby
-    float DodgeCooldownTimer = 0f;
+    [Header("Dodge/úhyb")]
+    public float dodgeSpeed = 15f;
+    public float dodgeDuration = 0.25f;
+    public float dodgeBaseCooldown = 1f; //cooldown mezi úhyby
+    float dodgeCooldownTimer = 0f;
     bool isDodging;
-    float DodgeTimer; //do konce úhybu
-    Vector3 DodgeDirection;
-
-
+    float dodgeTimer; //do konce úhybu
+    Vector3 dodgeDirection;
 
     CharacterController controller;
     InputAction moveAction;
@@ -37,10 +33,10 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        //priorita
-        if (DodgeCooldownTimer > 0f)
+        //cooldown úhybu
+        if (dodgeCooldownTimer > 0f)
         {
-            DodgeCooldownTimer -= Time.deltaTime;
+            dodgeCooldownTimer -= Time.deltaTime;
         }
 
         //gravitace (vždy)
@@ -50,43 +46,36 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            YSpeed += Gravity * Time.deltaTime;
+            YSpeed += gravity * Time.deltaTime;
         }
-
 
         //úhyb právì probíhá
         if (isDodging)
         {
-            DodgeTimer -= Time.deltaTime;
-            if (DodgeTimer <= 0f)
+            dodgeTimer -= Time.deltaTime;
+            if (dodgeTimer <= 0f)
             {
                 isDodging = false;
-                DodgeCooldownTimer = DodgeBaseCooldown;
+                dodgeCooldownTimer = dodgeBaseCooldown;
             }
             else
             {
-                Vector3 dodgeMove = DodgeDirection * DodgeSpeed;
+                Vector3 dodgeMove = dodgeDirection * dodgeSpeed;
                 dodgeMove.y = YSpeed;
                 controller.Move(dodgeMove * Time.deltaTime);
                 return; // bìhem úhybu žádná normální chùze ani otáèení
             }
         }
 
-
-
-
-
-
-
         //ètení vstupu
-        Vector2 input = moveAction.ReadValue<Vector2>() * MoveSpeed;
+        Vector2 input = moveAction.ReadValue<Vector2>() * moveSpeed;
 
         //spouštìní úhybu
-        if (dodgeAction.triggered && controller.isGrounded && DodgeCooldownTimer <= 0f && !isDodging)
+        if (dodgeAction.triggered && controller.isGrounded && dodgeCooldownTimer <= 0f && !isDodging)
         {
             isDodging = true;
-            DodgeTimer = DodgeDuration;
-            DodgeDirection = transform.forward;
+            dodgeTimer = dodgeDuration;
+            dodgeDirection = transform.forward;
         }
 
         //chùze
@@ -94,11 +83,11 @@ public class PlayerController : MonoBehaviour
         controller.Move(move * Time.deltaTime);
 
         //otáèení
-        Vector3 TargetDirection = new Vector3(input.x, 0f, input.y);
-        if (TargetDirection.sqrMagnitude > 0.01f)
+        Vector3 targetDirection = new Vector3(input.x, 0f, input.y);
+        if (targetDirection.sqrMagnitude > 0.01f)
         {
-            Quaternion cil = Quaternion.LookRotation(TargetDirection);
-            transform.rotation = Quaternion.Slerp(transform.rotation, cil, RotationSpeed * Time.deltaTime);
+            Quaternion cil = Quaternion.LookRotation(targetDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, cil, rotationSpeed * Time.deltaTime);
         }
     }
 }
