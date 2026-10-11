@@ -4,7 +4,6 @@ using UnityEngine.UIElements;
 [System.Serializable]
 public class WeaponStatsMelee
 {
-    //nevim kam mam dat serializable
     public string weaponName;
     public float range;
     public float arc;
