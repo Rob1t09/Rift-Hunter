@@ -75,16 +75,20 @@ public class PlayerCombat : MonoBehaviour
         if (target != null)
         {
             //delka cesty k targetu
+            Collider targetCollider = target.GetComponent<Collider>();
+            Vector3 closest = targetCollider.ClosestPoint(transform.position);
+            Vector3 closestToTarget = closest - transform.position;
+            closestToTarget.y = 0f; //ignoruju y, chci jen horizontální úhel
             Vector3 directionToTarget = target.position - transform.position;
+            directionToTarget.y = 0f; //ignoruju y, chci jen horizontální úhel
 
-            if (directionToTarget.magnitude > melee.range)
+            //kontrola, jestli je target v dosahu
+            if (closestToTarget.magnitude > melee.range)
             {
-
                 return;
             }
 
             //otoèení na primary target
-            directionToTarget.y = 0; //ignoruju y, chci jen horizontální úhel
             if (directionToTarget.sqrMagnitude > 0.01f)
             {
                 transform.rotation = Quaternion.LookRotation(directionToTarget);
@@ -92,12 +96,22 @@ public class PlayerCombat : MonoBehaviour
         }
 
 
-        Collider[] enemies = Physics.OverlapSphere(transform.position, melee.range, enemyLayer);
+        Collider[] enemies = Physics.OverlapSphere(transform.position, melee.range + 1f, enemyLayer);
+        Debug.Log("Nalezeno: " + enemies.Length);
         foreach (Collider enemy in enemies)
         {
-            Vector3 directionToEnemy = (enemy.transform.position - transform.position).normalized;
-            directionToEnemy.y = 0; //ignoruju y, chci jen horizontální úhel
+            //nejbližší bod na collideru, a velký enemy nevypadne z oblouku
+            Vector3 closestPoint = enemy.ClosestPoint(transform.position);
+            Vector3 directionToEnemy = closestPoint - transform.position;
+            directionToEnemy.y = 0f; //ignoruju y, chci jen horizontální úhel
+
+            if (directionToEnemy.magnitude > melee.range)
+            {
+                continue; 
+            }
+
             float angleToEnemy = Vector3.Angle(transform.forward, directionToEnemy);
+            Debug.Log($"{enemy.name} úhel: {angleToEnemy}");
             if (angleToEnemy <= melee.arc / 2f)
             {
                 Health health = enemy.GetComponent<Health>();
@@ -114,6 +128,7 @@ public class PlayerCombat : MonoBehaviour
                 }
             }
         }
+    
 
     }
 
