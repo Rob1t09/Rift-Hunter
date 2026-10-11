@@ -11,12 +11,14 @@ public class PlayerCombat : MonoBehaviour
 
     InputAction attackAction;
     InputAction rangedAction;
+    PlayerController playerController;
 
 
     void Awake()
     {
         attackAction = InputSystem.actions.FindAction("Attack");
         rangedAction = InputSystem.actions.FindAction("Ranged");
+        playerController = GetComponent<PlayerController>();
     }
 
     private void Update()
@@ -26,6 +28,8 @@ public class PlayerCombat : MonoBehaviour
             meleeCooldownTimer -= Time.deltaTime;
         }
 
+
+        if (playerController.IsDodging) return;
         if (attackAction.triggered && meleeCooldownTimer <= 0)
         {
             MeleeAttack();
@@ -54,22 +58,52 @@ public class PlayerCombat : MonoBehaviour
     void MeleeAttack()
     {
         // Implementovat melee attack logiku
-        Debug.Log("Melee attack");
         meleeCooldownTimer = melee.cooldown;
         Transform target = GetCursorTarget();
-        if (target == null) return;
-        Debug.Log("Melee attack on target: " + target.name);
+        if (target != null)
+        {
+            //otoèení na primary target
+            Vector3 directionToTarget = target.position - transform.position;
+            directionToTarget.y = 0; //ignoruju y, chci jen horizontální úhel
+            if (directionToTarget.sqrMagnitude > 0.01f)
+            {
+                transform.rotation = Quaternion.LookRotation(directionToTarget);
+            }
+        }
 
-
+        Collider[] enemies = Physics.OverlapSphere(transform.position, melee.range, enemyLayer);
+        foreach (Collider enemy in enemies)
+        {
+            Vector3 directionToEnemy = (enemy.transform.position - transform.position).normalized;
+            directionToEnemy.y = 0; //ignoruju y, chci jen horizontální úhel
+            float angleToEnemy = Vector3.Angle(transform.forward, directionToEnemy);
+            if (angleToEnemy <= melee.arc / 2f)
+            {
+                Health health = enemy.GetComponent<Health>();
+                if (health != null)
+                {
+                    if (enemy.transform == target)
+                    {
+                        health.TakeDamage(melee.damage);
+                    }
+                    else
+                    {
+                        health.TakeDamage(melee.damage * melee.secondaryDamageMultiplier);
+                    }
+                }
+            }
+        }
+        
     }
 
     void RangedAttack()
     {
         // Implementovat ranged attack logiku
-        Debug.Log("Ranged attack");
         Transform target = GetCursorTarget();
-        if (target == null) return;
-        Debug.Log("Ranged attack on target: " + target.name);
+        if (target != null)
+        {
+            
+        }
     }
 }
 

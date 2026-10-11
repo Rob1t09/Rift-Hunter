@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     public float dodgeBaseCooldown = 1f; //cooldown mezi úhyby
     float dodgeCooldownTimer = 0f;
     bool isDodging;
+    public bool IsDodging => isDodging;
     float dodgeTimer; //do konce úhybu
     Vector3 dodgeDirection;
 
