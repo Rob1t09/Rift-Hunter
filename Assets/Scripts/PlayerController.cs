@@ -24,12 +24,14 @@ public class PlayerController : MonoBehaviour
     CharacterController controller;
     InputAction moveAction;
     InputAction dodgeAction;
+    PlayerCombat combat;
 
     void Awake()
     {
         controller = GetComponent<CharacterController>();
         moveAction = InputSystem.actions.FindAction("Move");
         dodgeAction = InputSystem.actions.FindAction("Dodge");
+        combat = GetComponent<PlayerCombat>();
     }
 
     void Update()
@@ -77,6 +79,14 @@ public class PlayerController : MonoBehaviour
             isDodging = true;
             dodgeTimer = dodgeDuration;
             dodgeDirection = transform.forward;
+            combat.CancelAttackLock(); //úhyb pøeruší attack lock
+        }
+
+        //attack lock = žádná chùze ani otáèení
+        if (combat.IsAttackLocked)
+        {
+            controller.Move(new Vector3(0f, YSpeed, 0f) * Time.deltaTime);
+            return;
         }
 
         //chùze

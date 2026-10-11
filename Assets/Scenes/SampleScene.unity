@@ -638,6 +638,9 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 64
+  zoomStep: 0.1
+  minZoom: 0.5
+  maxZoom: 2
 --- !u!1 &377745927
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,7 +804,7 @@ MonoBehaviour:
   gravity: -15
   rotationSpeed: 10
   dodgeSpeed: 15
-  dodgeDuration: 0.25
+  dodgeDuration: 0.5
   dodgeBaseCooldown: 1
 --- !u!143 &388087183
 CharacterController:
@@ -847,6 +850,7 @@ MonoBehaviour:
     damage: 10
     secondaryDamageMultiplier: 0.5
     cooldown: 0.6
+    attackLockTime: 0.2
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128

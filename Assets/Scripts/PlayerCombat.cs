@@ -7,7 +7,8 @@ public class PlayerCombat : MonoBehaviour
     public LayerMask enemyLayer;
 
     float meleeCooldownTimer;
-
+    float attackLockTimer;
+    public bool IsAttackLocked => attackLockTimer > 0f;
 
     InputAction attackAction;
     InputAction rangedAction;
@@ -27,10 +28,14 @@ public class PlayerCombat : MonoBehaviour
         {
             meleeCooldownTimer -= Time.deltaTime;
         }
+        if (attackLockTimer > 0f)
+        {
+            attackLockTimer -= Time.deltaTime;
+        }
 
 
         if (playerController.IsDodging) return;
-        if (attackAction.triggered && meleeCooldownTimer <= 0)
+        if (attackAction.triggered && meleeCooldownTimer <= 0 && !IsAttackLocked)
         {
             MeleeAttack();
         }
@@ -38,6 +43,11 @@ public class PlayerCombat : MonoBehaviour
         {
             RangedAttack();
         }
+    }
+
+    public void CancelAttackLock()
+    {
+        attackLockTimer = 0f;
     }
 
     Transform GetCursorTarget()
@@ -58,18 +68,29 @@ public class PlayerCombat : MonoBehaviour
     void MeleeAttack()
     {
         // Implementovat melee attack logiku
+        
         meleeCooldownTimer = melee.cooldown;
+        attackLockTimer = melee.attackLockTime;
         Transform target = GetCursorTarget();
         if (target != null)
         {
-            //otoèení na primary target
+            //delka cesty k targetu
             Vector3 directionToTarget = target.position - transform.position;
+
+            if (directionToTarget.magnitude > melee.range)
+            {
+
+                return;
+            }
+
+            //otoèení na primary target
             directionToTarget.y = 0; //ignoruju y, chci jen horizontální úhel
             if (directionToTarget.sqrMagnitude > 0.01f)
             {
                 transform.rotation = Quaternion.LookRotation(directionToTarget);
             }
         }
+
 
         Collider[] enemies = Physics.OverlapSphere(transform.position, melee.range, enemyLayer);
         foreach (Collider enemy in enemies)
@@ -93,7 +114,7 @@ public class PlayerCombat : MonoBehaviour
                 }
             }
         }
-        
+
     }
 
     void RangedAttack()
@@ -102,8 +123,7 @@ public class PlayerCombat : MonoBehaviour
         Transform target = GetCursorTarget();
         if (target != null)
         {
-            
+
         }
     }
 }
-

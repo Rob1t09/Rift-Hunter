@@ -11,4 +11,5 @@ public class WeaponStatsMelee
     public float damage;
     public float secondaryDamageMultiplier;
     public float cooldown;
+    public float attackLockTime;
 }
