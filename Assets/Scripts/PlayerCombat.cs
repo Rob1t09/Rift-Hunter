@@ -36,18 +36,40 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    Transform GetCursorTarget()
+    {
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
+        Ray mouseRay = Camera.main.ScreenPointToRay(mousePosition);
+        if (Physics.Raycast(mouseRay, out RaycastHit hit, 100f, enemyLayer))
+        {
+            return hit.collider.transform;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 
     void MeleeAttack()
     {
         // Implementovat melee attack logiku
         Debug.Log("Melee attack");
         meleeCooldownTimer = melee.cooldown;
+        Transform target = GetCursorTarget();
+        if (target == null) return;
+        Debug.Log("Melee attack on target: " + target.name);
+
+
     }
 
     void RangedAttack()
     {
         // Implementovat ranged attack logiku
         Debug.Log("Ranged attack");
+        Transform target = GetCursorTarget();
+        if (target == null) return;
+        Debug.Log("Ranged attack on target: " + target.name);
     }
 }
 
