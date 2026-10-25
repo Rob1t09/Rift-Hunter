@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
         //gravitace (vždy)
         if (controller.isGrounded)
         {
-            YSpeed = -2f;
+            YSpeed = -7f;
         }
         else
         {
