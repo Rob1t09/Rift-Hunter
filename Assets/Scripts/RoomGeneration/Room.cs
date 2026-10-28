@@ -25,16 +25,16 @@ public class Room : MonoBehaviour
         localCells.Clear();
 
         roomSlots.AddRange(GetComponentsInChildren<RoomSlot>(true));
-
         if (cells.Count == 0)
         {
             Debug.LogWarning("Room " + name + " has no cells assigned.");
             return;
         }
 
+        //firstCellLocal: transform.InverseTransformPoint(cells[0].position);
         foreach (Transform marker in cells)
         {
-            Debug.Log(transform.InverseTransformPoint(marker.position));
+            
         }
 
     }

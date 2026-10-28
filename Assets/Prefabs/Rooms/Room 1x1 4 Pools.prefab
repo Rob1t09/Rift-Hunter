@@ -639,6 +639,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3740304902772319753}
+  - component: {fileID: 1330968467226785845}
   m_Layer: 6
   m_Name: East
   m_TagString: Untagged
@@ -663,6 +664,21 @@ Transform:
   - {fileID: 2356073183505654953}
   m_Father: {fileID: 287582596463484925}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &1330968467226785845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1091349015183557468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13ce9997472622c498dc6888f4fbf7a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
+  closedWall: {fileID: 6664203606534370835}
+  doorway: {fileID: 8459821466319113477}
+  LocalCell: {x: 0, y: 0}
 --- !u!1 &1106766661865925184
 GameObject:
   m_ObjectHideFlags: 0
@@ -1488,6 +1504,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8223570027760934025}
+  - component: {fileID: 8836180409040603273}
   m_Layer: 6
   m_Name: South
   m_TagString: Untagged
@@ -1512,6 +1529,21 @@ Transform:
   - {fileID: 7293550594856384113}
   m_Father: {fileID: 287582596463484925}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &8836180409040603273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2782207997843159339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13ce9997472622c498dc6888f4fbf7a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
+  closedWall: {fileID: 8640131713595557198}
+  doorway: {fileID: 8982042026922095367}
+  LocalCell: {x: 0, y: 0}
 --- !u!1 &2819371030067692603
 GameObject:
   m_ObjectHideFlags: 0
@@ -1723,6 +1755,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5256162455436951631}
+  - component: {fileID: 7205249268791366554}
   m_Layer: 6
   m_Name: North
   m_TagString: Untagged
@@ -1747,6 +1780,21 @@ Transform:
   - {fileID: 6483115270754901953}
   m_Father: {fileID: 287582596463484925}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7205249268791366554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3490310280463548974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13ce9997472622c498dc6888f4fbf7a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
+  closedWall: {fileID: 1611724848548895454}
+  doorway: {fileID: 7638808679592208603}
+  LocalCell: {x: 0, y: 0}
 --- !u!1 &3598088005730987078
 GameObject:
   m_ObjectHideFlags: 0
@@ -1756,6 +1804,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2126289338319030341}
+  - component: {fileID: 3831130035302832150}
   m_Layer: 6
   m_Name: Room 1x1 4 Pools
   m_TagString: Untagged
@@ -1782,6 +1831,29 @@ Transform:
   - {fileID: 6007795907915020333}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3831130035302832150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3598088005730987078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63de034c1c6f5f4e93686687a6e85c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Room
+  type: 2
+  value: 1
+  weight: 1
+  cells:
+  - {fileID: 5300763857749524268}
+  localCells: []
+  roomSlots:
+  - {fileID: 7205249268791366554}
+  - {fileID: 1330968467226785845}
+  - {fileID: 8836180409040603273}
+  - {fileID: 4785418088880238029}
 --- !u!1 &3701246439837735430
 GameObject:
   m_ObjectHideFlags: 0
@@ -4372,6 +4444,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5578301483720961756}
+  - component: {fileID: 4785418088880238029}
   m_Layer: 6
   m_Name: West
   m_TagString: Untagged
@@ -4396,6 +4469,21 @@ Transform:
   - {fileID: 1034620172002390355}
   m_Father: {fileID: 287582596463484925}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!114 &4785418088880238029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8834799652684905790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13ce9997472622c498dc6888f4fbf7a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
+  closedWall: {fileID: 6162629902981832321}
+  doorway: {fileID: 273756902861151993}
+  LocalCell: {x: 0, y: 0}
 --- !u!1 &8982042026922095367
 GameObject:
   m_ObjectHideFlags: 0
