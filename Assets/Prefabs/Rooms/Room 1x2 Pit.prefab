@@ -519,6 +519,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &376261524695519553
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1170411285339134663}
+  m_Layer: 6
+  m_Name: Cell 0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1170411285339134663
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 376261524695519553}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 7.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3407074595489799908}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &382567314803437204
 GameObject:
   m_ObjectHideFlags: 0
@@ -1791,7 +1822,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 3679595764305685897}
   doorway: {fileID: 7823402817292781450}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: -1}
+  localDirection: {x: 0, y: -1}
 --- !u!1 &2160175809498771068
 GameObject:
   m_ObjectHideFlags: 0
@@ -2578,7 +2610,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 3319020673437103486}
   doorway: {fileID: 815940027962716534}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: 0, y: 1}
 --- !u!1 &3385776391301209074
 GameObject:
   m_ObjectHideFlags: 0
@@ -2661,38 +2694,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 5355686481089884686}
   doorway: {fileID: 8901819585369549979}
-  LocalCell: {x: 0, y: 0}
---- !u!1 &3607478713495284131
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4137925673041211086}
-  m_Layer: 6
-  m_Name: Cell 0
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4137925673041211086
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3607478713495284131}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3407074595489799908}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  localCell: {x: 0, y: -1}
+  localDirection: {x: -1, y: 0}
 --- !u!1 &3679595764305685897
 GameObject:
   m_ObjectHideFlags: 0
@@ -2777,9 +2780,11 @@ MonoBehaviour:
   value: 1
   weight: 1
   cells:
-  - {fileID: 4137925673041211086}
+  - {fileID: 1170411285339134663}
   - {fileID: 4048983660637997497}
-  localCells: []
+  localCells:
+  - {x: 0, y: 0}
+  - {x: 0, y: -1}
   roomSlots:
   - {fileID: 3558766448013080404}
   - {fileID: 4647321325072696925}
@@ -3605,7 +3610,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 6597418236966281525}
   doorway: {fileID: 2816695812478447949}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: 1, y: 0}
 --- !u!1 &5799394837836116466
 GameObject:
   m_ObjectHideFlags: 0
@@ -3766,7 +3772,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 1625376917992317588}
   doorway: {fileID: 7477963714543364450}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: -1, y: 0}
 --- !u!1 &5854791577856474364
 GameObject:
   m_ObjectHideFlags: 0
@@ -6640,7 +6647,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4137925673041211086}
+  - {fileID: 1170411285339134663}
   - {fileID: 4048983660637997497}
   m_Father: {fileID: 7375463033514356333}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6845,4 +6852,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 5501237098495071572}
   doorway: {fileID: 8221340523737281950}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: -1}
+  localDirection: {x: 1, y: 0}

@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class RoomSlot : MonoBehaviour
@@ -6,7 +5,8 @@ public class RoomSlot : MonoBehaviour
     public GameObject closedWall;
     public GameObject doorway;
 
-    public Vector2Int LocalCell;
+    public Vector2Int localCell;
+    public Vector2Int localDirection;
 
     //cist smi kdokoliv, zapis jen zde
     public bool IsOpen { get; private set; }

@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
 
@@ -45,6 +44,10 @@ public static class RoomPrefabSetup
                     processed++;
                 }
             }
+            catch (System.Exception e)
+            {
+                Warn(path + ": chyba pøi nastavování: " + e.Message);
+            }
             finally
             {
                 //uvolni prefab z pameti
@@ -78,22 +81,24 @@ public static class RoomPrefabSetup
             room = prefabRoot.AddComponent<Room>();
         }
 
-        //kdyz je seznam bunek (bod gridu) prazdny tak ho naplnime
-        if (room.cells.Count == 0)
+
+        //puvodne kdyz je seznam bunek (bod gridu) prazdny tak ho naplnime
+        //ted mazu kvuli nesikovnosti
+        room.cells.Clear();
+        
+        Transform cellsParent = prefabRoot.transform.Find(CellsName);
+        if (cellsParent == null)
         {
-            Transform cellsParent = prefabRoot.transform.Find(CellsName);
-            if (cellsParent == null)
+            Warn(prefabRoot.name + ": chybí objekt '" + CellsName + "' se znaèkami bunìk.");
+        }
+        else
+        {
+            foreach (Transform marker in cellsParent)
             {
-                Warn(prefabRoot.name + ": chybí objekt '" + CellsName + "' se znaèkami bunìk.");
-            }
-            else
-            {
-                foreach (Transform marker in cellsParent)
-                {
-                    room.cells.Add(marker);
-                }
+                room.cells.Add(marker);
             }
         }
+        
 
 
 

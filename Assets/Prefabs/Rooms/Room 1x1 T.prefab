@@ -1314,7 +1314,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 4576437923650160999}
   doorway: {fileID: 6681520427570562738}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: -1, y: 0}
 --- !u!1 &3003760755041185974
 GameObject:
   m_ObjectHideFlags: 0
@@ -1953,7 +1954,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 8250531294314361341}
   doorway: {fileID: 1569176854927880287}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: 1, y: 0}
 --- !u!1 &5412543353159584750
 GameObject:
   m_ObjectHideFlags: 0
@@ -2226,7 +2228,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 5963023727907136300}
   doorway: {fileID: 4442893495856305273}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: 0, y: 1}
 --- !u!1 &5963023727907136300
 GameObject:
   m_ObjectHideFlags: 0
@@ -3129,7 +3132,8 @@ MonoBehaviour:
   weight: 1
   cells:
   - {fileID: 981145871959295055}
-  localCells: []
+  localCells:
+  - {x: 0, y: 0}
   roomSlots:
   - {fileID: 4768068025374053990}
   - {fileID: 5354253442764143347}

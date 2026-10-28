@@ -558,7 +558,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 4807509627637637778}
   doorway: {fileID: 6897075847762967248}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: -1, y: -1}
+  localDirection: {x: 0, y: -1}
 --- !u!1 &1024113774837921032
 GameObject:
   m_ObjectHideFlags: 0
@@ -1576,7 +1577,10 @@ MonoBehaviour:
   - {fileID: 2075685941308570681}
   - {fileID: 2664536873730228089}
   - {fileID: 8955843932701360412}
-  localCells: []
+  localCells:
+  - {x: 0, y: 0}
+  - {x: 0, y: -1}
+  - {x: -1, y: -1}
   roomSlots:
   - {fileID: 4090758294434452479}
   - {fileID: 2891603004305410405}
@@ -1776,7 +1780,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 7110004950527676126}
   doorway: {fileID: 5275826777498856460}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: -1, y: 0}
 --- !u!1 &2527680470944616922
 GameObject:
   m_ObjectHideFlags: 0
@@ -4010,7 +4015,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 3244596363644799557}
   doorway: {fileID: 5911376974507057081}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: 0, y: 1}
 --- !u!1 &5043783917844613344
 GameObject:
   m_ObjectHideFlags: 0
@@ -4460,7 +4466,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 2182422475768978466}
   doorway: {fileID: 1612915562059319060}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: -1, y: -1}
+  localDirection: {x: -1, y: 0}
 --- !u!1 &5730694044207413449
 GameObject:
   m_ObjectHideFlags: 0
@@ -5030,7 +5037,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 1366044165372618553}
   doorway: {fileID: 9036281014437797278}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: 1, y: 0}
 --- !u!1 &6604048928543564706
 GameObject:
   m_ObjectHideFlags: 0
@@ -5631,7 +5639,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 8766826472596170835}
   doorway: {fileID: 6790649855527582286}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: -1, y: -1}
+  localDirection: {x: 0, y: 1}
 --- !u!1 &7110004950527676126
 GameObject:
   m_ObjectHideFlags: 0

@@ -4392,7 +4392,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 2232979533603897114}
   doorway: {fileID: 7356538603629053857}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: -1}
+  localDirection: {x: 0, y: -1}
 --- !u!1 &5018037829631501122
 GameObject:
   m_ObjectHideFlags: 0
@@ -4665,7 +4666,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 5882044868537781502}
   doorway: {fileID: 5480003950275079854}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: -1}
+  localDirection: {x: 1, y: 0}
 --- !u!1 &5480003950275079854
 GameObject:
   m_ObjectHideFlags: 0
@@ -6398,7 +6400,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 4838561853752272116}
   doorway: {fileID: 3939032815621349873}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: -1, y: 0}
 --- !u!1 &7047796402303045435
 GameObject:
   m_ObjectHideFlags: 0
@@ -6453,7 +6456,9 @@ MonoBehaviour:
   cells:
   - {fileID: 4579107388884040270}
   - {fileID: 3700556266374350526}
-  localCells: []
+  localCells:
+  - {x: 0, y: 0}
+  - {x: 0, y: -1}
   roomSlots:
   - {fileID: 7201202714533054964}
   - {fileID: 651959502891678853}
@@ -6913,7 +6918,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 1009672372633536409}
   doorway: {fileID: 7645681406907063968}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: 0, y: 1}
 --- !u!1 &7645681406907063968
 GameObject:
   m_ObjectHideFlags: 0
@@ -7290,7 +7296,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 4965150428276103019}
   doorway: {fileID: 3787470247890454205}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: -1}
+  localDirection: {x: -1, y: 0}
 --- !u!1 &7913245448799356465
 GameObject:
   m_ObjectHideFlags: 0
@@ -7675,7 +7682,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 2203136525825142576}
   doorway: {fileID: 7852517599375202680}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: 1, y: 0}
 --- !u!1 &8391481041076822686
 GameObject:
   m_ObjectHideFlags: 0

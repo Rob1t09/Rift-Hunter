@@ -3625,7 +3625,8 @@ MonoBehaviour:
   weight: 1
   cells:
   - {fileID: 149197584948463168}
-  localCells: []
+  localCells:
+  - {x: 0, y: 0}
   roomSlots:
   - {fileID: 1269083299623730998}
 --- !u!1 &7178040605317072017
@@ -4461,7 +4462,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomSlot
   closedWall: {fileID: 8087785853602877094}
   doorway: {fileID: 5440538581832606319}
-  LocalCell: {x: 0, y: 0}
+  localCell: {x: 0, y: 0}
+  localDirection: {x: 0, y: -1}
 --- !u!1 &8693664957405365113
 GameObject:
   m_ObjectHideFlags: 0
