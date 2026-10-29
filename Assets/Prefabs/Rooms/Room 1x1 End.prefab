@@ -3620,7 +3620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63de034c1c6f5f4e93686687a6e85c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Room
-  type: 2
+  type: 1
   value: 1
   weight: 1
   cells:

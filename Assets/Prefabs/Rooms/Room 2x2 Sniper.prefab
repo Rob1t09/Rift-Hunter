@@ -4556,7 +4556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Room
   type: 2
-  value: 1
+  value: 4
   weight: 1
   cells:
   - {fileID: 8602624556688534177}

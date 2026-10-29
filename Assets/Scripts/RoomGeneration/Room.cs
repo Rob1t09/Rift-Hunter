@@ -23,7 +23,7 @@ public class Room : MonoBehaviour
     {
         roomSlots.Clear();
         localCells.Clear();
-
+        value = cells.Count;
 
         roomSlots.AddRange(GetComponentsInChildren<RoomSlot>(true));
         if (cells.Count == 0)
