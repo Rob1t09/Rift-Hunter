@@ -12,6 +12,7 @@ public class Generator : MonoBehaviour
     private List<Room> startRoomList = new List<Room>();
     private List<Room> endRoomList = new List<Room>();
     private List<Room> normalRoomList = new List<Room>();
+    private HashSet<Room> usedRoomList = new HashSet<Room>();
 
 
     //TODO:
@@ -42,50 +43,79 @@ public class Generator : MonoBehaviour
             }
         }
 
-        //start mistnost
-        do
-        {
-            int posX = Random.Range(0, generatorGrid.GetLength(0));
-            int posY = Random.Range(0, generatorGrid.GetLength(1));
 
-            Instantiate(
-                startRoomList[0], 
-                TryPlace(startRoomList, generatorGrid, new Vector2(posX, posY)), 
-                Quaternion.identity
-                        );
-
-
-        }
-        while (false); // zatim nevim jak udelat podminku
-
-
+        GenPath();
     }
 
 
-    private Vector3 TryPlace(List<Room> list, int[,] grid, Vector2 start)
+    private void GenPath()
     {
-        do
+        int attempts = 10;
+        for (int i = 0; i < attempts; i++)
         {
-            Room room = list[Random.Range(0, list.Count)];
+            Restart();
+
+            if (!StartRoom()) continue;
+            // if (!NormalRooms()) continue;
+            // if (!EndRoom()) continue;
+
+            return;
+        }
+
+        Debug.LogError("Generování se nepodaøilo ani po " + attempts + " pokusech.");
+    }
+
+    private bool StartRoom()
+    {
+        int posX = Random.Range(0, generatorGrid.GetLength(0));
+        int posY = Random.Range(0, generatorGrid.GetLength(1));
+
+        //novy typ spawnovani
+        return PlaceRoom(startRoomList, new Vector2Int(posX, posY)) != null;
+    }
+
+    private Room PlaceRoom(List<Room> roomList, Vector2Int position)
+    {
+        List<Room> candidates = roomList.Where(r => !usedRoomList.Contains(r)).OrderBy(r => Random.value).ToList();
+        Room placed = null;
+
+        foreach (Room candidate in candidates)
+        {
+            placed = TryPlace(candidate, position, generatorGrid);
+            if (placed != null)
+            {
+                usedRoomList.Add(candidate);
+                return placed;
+            }
+        }
+
+        return null;
+    }
+
+    private Room TryPlace(Room room, Vector2Int start, int[,] grid)
+    {
+
+        //prvni cell mistnosti kde se budou propojovat
+        List<Vector2Int> cells = new List<Vector2Int>(room.localCells).OrderBy(r => Random.value).ToList();
+
+        Vector2 center = new Vector2(
+                (room.localCells.Min(v => v.x) + room.localCells.Max(v => v.x)) / 2f,
+                (room.localCells.Min(v => v.y) + room.localCells.Max(v => v.y)) / 2f
+                                     );
+
+        foreach (Vector2Int cell in cells)
+        {
+            Vector2Int offset = start - cell;
             bool badCell = false;
 
             //start grid pozice kde bude prvni cell
 
             //prvni cell mistnosti kde se budou propojovat
-            Vector2 cell = room.localCells[Random.Range(0, room.localCells.Count)];
-
-            Vector2 avgVector = new Vector2
-            (
-                (float)room.localCells.Average(v => v.x),
-                (float)room.localCells.Average(v => v.y)
-            );
-
-
 
             foreach (Vector2 localCell in room.localCells)
             {
-                int posX = Mathf.RoundToInt(start.x + localCell.x);
-                int posY = Mathf.RoundToInt(start.y + localCell.y);
+                int posX = Mathf.RoundToInt(localCell.x + offset.x);
+                int posY = Mathf.RoundToInt(localCell.y + offset.y);
                 if (
                     posX < 0 || posX >= grid.GetLength(0) || //jestli je mimo grid
                     posY < 0 || posY >= grid.GetLength(1) ||
@@ -97,37 +127,42 @@ public class Generator : MonoBehaviour
                 }
             }
 
-            if (badCell)
-            {
-                continue;
-            }
+            if (badCell) continue;
+
 
             //melo by jit dal jen kdyz by zadna cast roomek nevypadla z mapy/nebyla na jiny roomce
-            Vector3 roomPosition = new Vector3
-                (
-                    (start.x + (cell.x - avgVector.x)) * GridSettings.Cell,
-                    0,
-                    (start.y + (cell.y - avgVector.y)) * GridSettings.Cell
-                );
-
-
-            foreach (Vector2 localCell in room.localCells)
+            foreach (Vector2Int localCell in room.localCells)
             {
-                int posX = Mathf.RoundToInt(start.x + localCell.x);
-                int posY = Mathf.RoundToInt(start.y + localCell.y);
-                grid[posX, posY] = 1;
+                grid[localCell.x + offset.x, localCell.y + offset.y] = 1;
             }
 
-            return roomPosition;
 
+            Vector3 roomPosition = new Vector3(
+                (center.x + offset.x) * GridSettings.Cell,
+                0,
+                (center.y + offset.y) * GridSettings.Cell
+            );
 
-        } while (true); 
+            Room instance = Instantiate(room, roomPosition, Quaternion.identity, transform);
+            return instance;
+
+            //pokud je vsechno v pohode tak se odesle room a vytvori se ve svete nova roomka
+        }
+        //pokud ne tak se posle null a udela se dalsi pokus
+        return null;
     }
 
-    private int RandomDirection()
+
+
+    private List<int> RandomDirections()
     {
-        int randomPos = Random.Range(0, 4);
-        return randomPos;
+        List<int> directions1 = new List<int>();
+        for (int i = 0; i < 4; i++)
+        {
+            directions1.Add(i*90);
+        }
+        List<int> directions2 = new List<int>(directions1).OrderBy(r => Random.value).ToList();
+        return directions2;
     }
 
     private Vector2 RotationToVector(Vector2 position, Quaternion rotation)
@@ -135,6 +170,20 @@ public class Generator : MonoBehaviour
         Vector3 pos = new Vector3(position.x, 0, position.y);
         Vector3 rotated = rotation * pos;
 
-        return new Vector2(Mathf.RoundToInt(rotated.x), Mathf.RoundToInt(rotated.z));
+        return new Vector2(rotated.x, rotated.z);
+    }
+
+    private void Restart()
+    {
+        Debug.Log("restartuje se cesta");
+
+
+        System.Array.Clear(generatorGrid, 0, generatorGrid.Length);
+        usedRoomList.Clear();
+
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+        }
     }
 }
