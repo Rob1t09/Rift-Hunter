@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Hierarchy.Editor;
 using UnityEngine;
 
 public class Generator : MonoBehaviour
@@ -94,59 +95,70 @@ public class Generator : MonoBehaviour
 
     private Room TryPlace(Room room, Vector2Int start, int[,] grid)
     {
-
-        //prvni cell mistnosti kde se budou propojovat
-        List<Vector2Int> cells = new List<Vector2Int>(room.localCells).OrderBy(r => Random.value).ToList();
-
-        Vector2 center = new Vector2(
-                (room.localCells.Min(v => v.x) + room.localCells.Max(v => v.x)) / 2f,
-                (room.localCells.Min(v => v.y) + room.localCells.Max(v => v.y)) / 2f
-                                     );
-
-        foreach (Vector2Int cell in cells)
+        List<int> randomDir = RandomDirections();
+        foreach (int direction in randomDir)
         {
-            Vector2Int offset = start - cell;
-            bool badCell = false;
-
-            //start grid pozice kde bude prvni cell
-
             //prvni cell mistnosti kde se budou propojovat
-
-            foreach (Vector2 localCell in room.localCells)
+            List<Vector2Int> newcells = new List<Vector2Int>();
+            foreach (Vector2Int cell in room.localCells)
             {
-                int posX = Mathf.RoundToInt(localCell.x + offset.x);
-                int posY = Mathf.RoundToInt(localCell.y + offset.y);
-                if (
-                    posX < 0 || posX >= grid.GetLength(0) || //jestli je mimo grid
-                    posY < 0 || posY >= grid.GetLength(1) ||
-                    grid[posX, posY] != 0 //jestli neni obsazena
-                    )
+                Vector2 rotatedCell = RotationToVector(cell, Quaternion.Euler(0, direction, 0));
+                Vector2Int rotatedIntCell = new Vector2Int(Mathf.RoundToInt(rotatedCell.x), Mathf.RoundToInt(rotatedCell.y));
+                newcells.Add(rotatedIntCell);
+            }
+            List<Vector2Int> cells = new List<Vector2Int>(newcells).OrderBy(r => Random.value).ToList();
+
+            Vector2 center = new Vector2(
+                    (cells.Min(v => v.x) + cells.Max(v => v.x)) / 2f,
+                    (cells.Min(v => v.y) + cells.Max(v => v.y)) / 2f
+                                         );
+
+            foreach (Vector2Int cell in cells)
+            {
+                Vector2Int offset = start - cell;
+                bool badCell = false;
+
+                //start grid pozice kde bude prvni cell
+
+                //prvni cell mistnosti kde se budou propojovat
+
+                foreach (Vector2Int localCell in cells)
                 {
-                    badCell = true;
-                    break;
+                    int posX = Mathf.RoundToInt(localCell.x + offset.x);
+                    int posY = Mathf.RoundToInt(localCell.y + offset.y);
+                    if (
+                        posX < 0 || posX >= grid.GetLength(0) || //jestli je mimo grid
+                        posY < 0 || posY >= grid.GetLength(1) ||
+                        grid[posX, posY] != 0 //jestli neni obsazena
+                        )
+                    {
+                        badCell = true;
+                        break;
+                    }
                 }
+
+                if (badCell) continue;
+
+
+                //melo by jit dal jen kdyz by zadna cast roomek nevypadla z mapy/nebyla na jiny roomce
+                foreach (Vector2Int localCell in cells)
+                {
+                    grid[localCell.x + offset.x, localCell.y + offset.y] = 1;
+                }
+
+
+                Vector3 roomPosition = new Vector3(
+                    (center.x + offset.x) * GridSettings.Cell,
+                    0,
+                    (center.y + offset.y) * GridSettings.Cell
+                );
+
+                Room instance = Instantiate(room, roomPosition, Quaternion.Euler(0, direction, 0), transform);
+                return instance;
+
+                //pokud je vsechno v pohode tak se odesle room a vytvori se ve svete nova roomka
             }
-
-            if (badCell) continue;
-
-
-            //melo by jit dal jen kdyz by zadna cast roomek nevypadla z mapy/nebyla na jiny roomce
-            foreach (Vector2Int localCell in room.localCells)
-            {
-                grid[localCell.x + offset.x, localCell.y + offset.y] = 1;
-            }
-
-
-            Vector3 roomPosition = new Vector3(
-                (center.x + offset.x) * GridSettings.Cell,
-                0,
-                (center.y + offset.y) * GridSettings.Cell
-            );
-
-            Room instance = Instantiate(room, roomPosition, Quaternion.identity, transform);
-            return instance;
-
-            //pokud je vsechno v pohode tak se odesle room a vytvori se ve svete nova roomka
+            //pokud ne tak se udela jina rotace a zkusi vsechny rotace
         }
         //pokud ne tak se posle null a udela se dalsi pokus
         return null;
@@ -162,6 +174,7 @@ public class Generator : MonoBehaviour
             directions1.Add(i*90);
         }
         List<int> directions2 = new List<int>(directions1).OrderBy(r => Random.value).ToList();
+        Debug.Log(directions2[0]);
         return directions2;
     }
 
