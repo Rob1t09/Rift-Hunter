@@ -16,6 +16,7 @@ public class Room : MonoBehaviour
     public List<Transform> cells = new List<Transform>(); //znacky objektu (bunek)
     public List<Vector2Int> localCells = new List<Vector2Int>(); //souradnice bunek
     public List<RoomSlot> roomSlots = new List<RoomSlot>();
+    public Transform playerSpawn;
 
 
     [ContextMenu("Naplnit")]

@@ -1,32 +1,37 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Hierarchy.Editor;
 using UnityEngine;
 
 public class Generator : MonoBehaviour
 {
-    public int size = 3;
+    public Transform Player;
+    private Room startInstance;
+    public int size = 4;
     public List<Room> rooms = new List<Room>();
 
     private int pathValue;
     private int[,] generatorGrid;
+    
+    //localDirection z roomslotu (otocit o 180 stupnu bc enter a exit jsou opaky)
+    //jen prave dalsi + vsechny kde se muze udelat fork
+    private List<(Vector2Int, Vector2Int, RoomSlot)> nextRoomSlotList = new List<(Vector2Int, Vector2Int, RoomSlot)>();
+    private List<(Vector2Int, Vector2Int, RoomSlot)> forkRoomSlotList = new List<(Vector2Int, Vector2Int, RoomSlot)>();
+    // pozice slotu v gridu ,  smer ven , roomslot     
+    //  pozice  ,    smer   , roomslot    
     private List<Room> startRoomList = new List<Room>();
     private List<Room> endRoomList = new List<Room>();
     private List<Room> normalRoomList = new List<Room>();
     private HashSet<Room> usedRoomList = new HashSet<Room>();
 
 
-    //TODO:
-    //TryPlace:
-    //  rotace
-    //  otvirani dveri
-    //obecne:
-    //  dalsi mistnosti krome spawn
+
+
     private void Awake()
     {
-        pathValue = Random.Range(size, Mathf.FloorToInt(size*2.5f));
-        generatorGrid = new int[size, size];
+        //pathValue = Random.Range(size, Mathf.FloorToInt(size*2.5f));
+        
 
+        generatorGrid = new int[size, size];
 
         foreach (Room room in rooms)
         {
@@ -51,14 +56,32 @@ public class Generator : MonoBehaviour
 
     private void GenPath()
     {
-        int attempts = 10;
+        int attempts = 100;
         for (int i = 0; i < attempts; i++)
         {
             Restart();
-
+            //start
             if (!StartRoom()) continue;
-            // if (!NormalRooms()) continue;
-            // if (!EndRoom()) continue;
+            //path
+            bool pathFailed = false;
+            while (pathValue > 0)
+            {
+                if (!NormalRooms(nextRoomSlotList)) { pathFailed = true; break; }
+            }
+            if (pathFailed) continue;
+            //end
+            if (!EndRoom()) continue;
+
+            //forkovani
+            while(!isGridFull(generatorGrid))
+            {
+                if (!NormalRooms(forkRoomSlotList)) break;
+            }
+            //zbyla dira v generaci -> restart
+            if (!isGridFull(generatorGrid)) continue;
+
+            MovePlayer();
+
 
             return;
         }
@@ -68,92 +91,151 @@ public class Generator : MonoBehaviour
 
     private bool StartRoom()
     {
-        int posX = Random.Range(0, generatorGrid.GetLength(0));
-        int posY = Random.Range(0, generatorGrid.GetLength(1));
-
-        //novy typ spawnovani
-        return PlaceRoom(startRoomList, new Vector2Int(posX, posY)) != null;
+        startInstance = PlaceRoom(startRoomList, nextRoomSlotList);
+        return startInstance != null;
+    }
+    private bool NormalRooms(List<(Vector2Int, Vector2Int, RoomSlot)> RoomSlotList)
+    {
+        Room placedRoom = PlaceRoom(normalRoomList, RoomSlotList);
+        if (placedRoom == null)
+        {
+            return false;
+        }
+        pathValue = pathValue - placedRoom.value;
+        return true;
+    }
+    private bool EndRoom()
+    {
+        return PlaceRoom(endRoomList, nextRoomSlotList) != null;
     }
 
-    private Room PlaceRoom(List<Room> roomList, Vector2Int position)
+    private Room PlaceRoom(List<Room> roomList, List<(Vector2Int, Vector2Int, RoomSlot)> RoomSlotList)
     {
         List<Room> candidates = roomList.Where(r => !usedRoomList.Contains(r)).OrderBy(r => Random.value).ToList();
+        List<(Vector2Int, Vector2Int, RoomSlot)> shuffledRoomSlots = RoomSlotList.OrderBy(r => Random.value).ToList();
         Room placed = null;
 
         foreach (Room candidate in candidates)
         {
-            placed = TryPlace(candidate, position, generatorGrid);
-            if (placed != null)
+            foreach ((Vector2Int position, Vector2Int direction, RoomSlot slot) shuffledSlot in shuffledRoomSlots)
             {
-                usedRoomList.Add(candidate);
-                return placed;
+                placed = TryPlace(candidate, shuffledSlot, RoomSlotList, generatorGrid);
+                if (placed != null)
+                {
+                    usedRoomList.Add(candidate);
+                    return placed;
+
+                    
+                }
+
             }
         }
 
         return null;
     }
 
-    private Room TryPlace(Room room, Vector2Int start, int[,] grid)
+    private Room TryPlace(Room room, (Vector2Int pos, Vector2Int dir, RoomSlot slot) shuffledSlot, List<(Vector2Int, Vector2Int, RoomSlot)> RoomSlotList, int[,] grid)
     {
+        bool isStart = room.type == Room.RoomType.Start;
+        Vector2Int targetCell = shuffledSlot.pos + shuffledSlot.dir;
+
+        
         List<int> randomDir = RandomDirections();
-        foreach (int direction in randomDir)
+        foreach (int angle in randomDir)
         {
             //prvni cell mistnosti kde se budou propojovat
             List<Vector2Int> newcells = new List<Vector2Int>();
             foreach (Vector2Int cell in room.localCells)
             {
-                Vector2 rotatedCell = RotationToVector(cell, Quaternion.Euler(0, direction, 0));
+                Vector2 rotatedCell = RotationToVector(cell, Quaternion.Euler(0, angle, 0));
                 Vector2Int rotatedIntCell = new Vector2Int(Mathf.RoundToInt(rotatedCell.x), Mathf.RoundToInt(rotatedCell.y));
                 newcells.Add(rotatedIntCell);
             }
             List<Vector2Int> cells = new List<Vector2Int>(newcells).OrderBy(r => Random.value).ToList();
 
+
+            //stred prefabu pro placenuti
             Vector2 center = new Vector2(
                     (cells.Min(v => v.x) + cells.Max(v => v.x)) / 2f,
                     (cells.Min(v => v.y) + cells.Max(v => v.y)) / 2f
                                          );
 
-            foreach (Vector2Int cell in cells)
+            //moznosti umisteni = offset (pozice) + index vstupniho slotu (-1 = start, zadny vstup)
+            List<(Vector2Int offset, int entryIndex)> options = new List<(Vector2Int, int)>();
+            if (isStart)
             {
-                Vector2Int offset = start - cell;
-                bool badCell = false;
-
-                //start grid pozice kde bude prvni cell
-
-                //prvni cell mistnosti kde se budou propojovat
-
-                foreach (Vector2Int localCell in cells)
+                //start muze byt kdekoliv
+                foreach (Vector2Int cell in cells)
                 {
-                    int posX = Mathf.RoundToInt(localCell.x + offset.x);
-                    int posY = Mathf.RoundToInt(localCell.y + offset.y);
-                    if (
-                        posX < 0 || posX >= grid.GetLength(0) || //jestli je mimo grid
-                        posY < 0 || posY >= grid.GetLength(1) ||
-                        grid[posX, posY] != 0 //jestli neni obsazena
-                        )
-                    {
-                        badCell = true;
-                        break;
-                    }
+                    options.Add((targetCell - cell, -1));
                 }
-
-                if (badCell) continue;
-
-
-                //melo by jit dal jen kdyz by zadna cast roomek nevypadla z mapy/nebyla na jiny roomce
-                foreach (Vector2Int localCell in cells)
+            }
+            else
+            {
+                //ostatni mistnosti musi sedet na slotu
+                //ktery po otoceni miri opacne nez vychod predchozi
+                for (int i = 0; i < room.roomSlots.Count; i++)
                 {
-                    grid[localCell.x + offset.x, localCell.y + offset.y] = 1;
+                    RoomSlot slot = room.roomSlots[i];
+                    if (RotateInt(slot.localDirection, angle) != -shuffledSlot.dir) continue;
+                    options.Add((targetCell - RotateInt(slot.localCell, angle), i));
                 }
+            }
 
+
+            foreach ((Vector2Int offset, int entryIndex) option in options.OrderBy(o => Random.value).ToList())
+            {
+                if (!CanPlace(cells, option.offset, grid)) continue;
+                if (isStart && DoorsLookOutside(room, angle, option.offset, grid)) continue;
+                //od ted je jiste ze se mistnost umisti
+                foreach (Vector2Int cell in cells)
+                {
+                    grid[cell.x + option.offset.x, cell.y + option.offset.y] = 1;
+                }
 
                 Vector3 roomPosition = new Vector3(
-                    (center.x + offset.x) * GridSettings.Cell,
+                    (center.x + option.offset.x) * GridSettings.Cell,
                     0,
-                    (center.y + offset.y) * GridSettings.Cell
+                    (center.y + option.offset.y) * GridSettings.Cell
                 );
+                
+                
+                Room instance = Instantiate(room, roomPosition, Quaternion.Euler(0, angle, 0), transform);
 
-                Room instance = Instantiate(room, roomPosition, Quaternion.Euler(0, direction, 0), transform);
+
+                //otevreni pruchodu na obou stranach
+                if (shuffledSlot.slot != null) shuffledSlot.slot.Open();
+                if (option.entryIndex >= 0) instance.roomSlots[option.entryIndex].Open();
+
+                //nove vychody z mistnosti
+                List<(Vector2Int, Vector2Int, RoomSlot)> newExits = new List<(Vector2Int, Vector2Int, RoomSlot)>();
+                for (int i = 0; i < instance.roomSlots.Count; i++)
+                {
+                    if (i == option.entryIndex) continue;
+
+                    RoomSlot slot = instance.roomSlots[i];
+                    
+                    newExits.Add((
+                        RotateInt(slot.localCell, angle) + option.offset,
+                        RotateInt(slot.localDirection, angle),
+                        slot
+                    ));
+                    
+                }
+                
+                //prace s listy
+                RoomSlotList.Remove(shuffledSlot);
+                if (ReferenceEquals(RoomSlotList, nextRoomSlotList))
+                {
+                    forkRoomSlotList.AddRange(RoomSlotList);
+                    RoomSlotList.Clear();
+                }
+                //nove vychody do listu dalsich slotu
+                RoomSlotList.AddRange(newExits);
+
+
+
+
                 return instance;
 
                 //pokud je vsechno v pohode tak se odesle room a vytvori se ve svete nova roomka
@@ -166,6 +248,79 @@ public class Generator : MonoBehaviour
 
 
 
+
+    private void MovePlayer()
+    {
+        if (startInstance == null)
+        {
+            Debug.LogError("Start instance is null. Cannot move player.");
+            return;
+        }
+        if (startInstance.playerSpawn == null)
+        {
+            Debug.LogError("Player spawn point is not set in the start room.");
+            return;
+        }
+        Player.position = startInstance.playerSpawn.position;
+        Player.rotation = startInstance.playerSpawn.rotation;
+    }
+
+
+    private bool isGridFull(int[,] grid)
+    {
+        for (int x = 0; x < grid.GetLength(0); x++)
+        {
+            for (int y = 0; y < grid.GetLength(1); y++)
+            {
+                if (grid[x, y] == 0)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    private bool DoorsLookOutside(Room room, int angle, Vector2Int offset, int[,] grid)
+    {
+        foreach (RoomSlot slot in room.roomSlots)
+        {
+            //buòka za slotem v gridu
+            Vector2Int target = RotateInt(slot.localCell, angle) + offset + RotateInt(slot.localDirection, angle);
+
+            if (target.x < 0 || target.x >= grid.GetLength(0) ||
+                target.y < 0 || target.y >= grid.GetLength(1))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool CanPlace(List<Vector2Int> cells, Vector2Int offset, int[,] grid)
+    {
+        foreach (Vector2Int c in cells)
+        {
+            int x = c.x + offset.x;
+            int y = c.y + offset.y;
+
+            if (x < 0 || x >= grid.GetLength(0) ||
+                y < 0 || y >= grid.GetLength(1) ||
+                grid[x, y] != 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private Vector2Int RotateInt(Vector2Int v, int angle)
+    {
+        Vector2 rotated = RotationToVector(v, Quaternion.Euler(0, angle, 0));
+        return new Vector2Int(Mathf.RoundToInt(rotated.x), Mathf.RoundToInt(rotated.y));
+    }
+
+
     private List<int> RandomDirections()
     {
         List<int> directions1 = new List<int>();
@@ -174,7 +329,7 @@ public class Generator : MonoBehaviour
             directions1.Add(i*90);
         }
         List<int> directions2 = new List<int>(directions1).OrderBy(r => Random.value).ToList();
-        Debug.Log(directions2[0]);
+        //Debug.Log(directions2[0]);
         return directions2;
     }
 
@@ -193,10 +348,18 @@ public class Generator : MonoBehaviour
 
         System.Array.Clear(generatorGrid, 0, generatorGrid.Length);
         usedRoomList.Clear();
+        nextRoomSlotList.Clear();
+        forkRoomSlotList.Clear();
+
+        pathValue = Mathf.FloorToInt(size * size / 2);
 
         for (int i = transform.childCount - 1; i >= 0; i--)
         {
             DestroyImmediate(transform.GetChild(i).gameObject);
         }
+
+        int posX = Random.Range(0, generatorGrid.GetLength(0));
+        int posY = Random.Range(0, generatorGrid.GetLength(1));
+        nextRoomSlotList.Add((new Vector2Int(posX, posY), new Vector2Int(0, 0), null));
     }
 }
