@@ -1,24 +1,41 @@
+using System.IO;
 using UnityEngine;
 
 public static class SaveManager
 {
     private static SaveData saveData = new SaveData();
 
+    private static string SavePath => Path.Combine(Application.persistentDataPath, "save.json");
+
     public static void Save()
     {
-        string json = JsonUtility.ToJson(saveData);
-        PlayerPrefs.SetString("SaveData", json);
-        PlayerPrefs.Save();
+        string json = JsonUtility.ToJson(saveData, true);
+        File.WriteAllText(SavePath, json);
     }
 
     public static void Load()
     {
-        if (PlayerPrefs.HasKey("SaveData"))
+        Debug.Log("Save file: " + SavePath);
+
+        if (!File.Exists(SavePath))
         {
-            string json = PlayerPrefs.GetString("SaveData");
+            saveData = new SaveData();
+            Save();
+            return;
+        }
+
+        try
+        {
+            string json = File.ReadAllText(SavePath);
             saveData = JsonUtility.FromJson<SaveData>(json);
         }
-        else
+        catch (System.Exception e)
+        {
+            Debug.LogError("Save file se nepodaøilo naèíst, zaèíná se znovu: " + e.Message);
+            saveData = null;
+        }
+
+        if (saveData == null)
         {
             saveData = new SaveData();
         }
@@ -45,7 +62,7 @@ public static class SaveManager
 
     public static bool IsLocationUnlocked(LocationData location)
     {
-        foreach(LocationData loc in location.RequiredLocation)
+        foreach (LocationData loc in location.RequiredLocation)
         {
             if (!IsLocationCompleted(loc.Id))
             {

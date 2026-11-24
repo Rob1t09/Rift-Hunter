@@ -24,7 +24,7 @@ public class Generator : MonoBehaviour
     private List<Room> normalRoomList = new List<Room>();
     private HashSet<Room> usedRoomList = new HashSet<Room>();
 
-    CharacterController controller;
+    public CharacterController controller;
 
 
     private void Awake()
