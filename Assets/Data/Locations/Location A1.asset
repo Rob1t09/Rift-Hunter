@@ -17,4 +17,4 @@ MonoBehaviour:
   gridSize: 3
   roomSet: {fileID: 11400000, guid: ea1fa97f0704e7f479390930e3ba320f, type: 2}
   requiredLocation: []
-  minDifficulty: 0
+  minDifficulty: 1

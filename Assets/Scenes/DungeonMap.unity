@@ -1103,7 +1103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Generator
   Player: {fileID: 388087181}
   size: 4
-  rooms:
+  tempRooms:
   - {fileID: 3831130035302832150, guid: d153c2050d1c7c84ca0f30239f868c52, type: 3}
   - {fileID: 2818234800837145414, guid: 37a4028397dceba438964bf2e7ec87ff, type: 3}
   - {fileID: 8005860681809807468, guid: 4487cec8f5134534ba7573f5a6998a5c, type: 3}

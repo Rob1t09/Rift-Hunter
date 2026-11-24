@@ -7,7 +7,8 @@ public class Generator : MonoBehaviour
     public Transform Player;
     private Room startInstance;
     public int size = 4;
-    public List<Room> rooms = new List<Room>();
+    public List<Room> tempRooms = new List<Room>();
+    private List<Room> rooms = new List<Room>();
 
     private int pathValue;
     private int[,] generatorGrid;
@@ -23,13 +24,25 @@ public class Generator : MonoBehaviour
     private List<Room> normalRoomList = new List<Room>();
     private HashSet<Room> usedRoomList = new HashSet<Room>();
 
-
+    CharacterController controller;
 
 
     private void Awake()
     {
+        if (RunSettings.CurrentLocation == null)
+        {
+            Debug.LogWarning("CurrentLocation is null. Using default room set.");
+            size = 4;
+            rooms = tempRooms;
+        }
+        else
+        {
+            size = RunSettings.CurrentLocation.GridSize;
+            rooms = RunSettings.CurrentLocation.RoomSet.Rooms;
+        }
+
         //pathValue = Random.Range(size, Mathf.FloorToInt(size*2.5f));
-        
+        controller = Player.GetComponent<CharacterController>();
 
         generatorGrid = new int[size, size];
 
@@ -261,8 +274,10 @@ public class Generator : MonoBehaviour
             Debug.LogError("Player spawn point is not set in the start room.");
             return;
         }
+        controller.enabled = false;
         Player.position = startInstance.playerSpawn.position;
         Player.rotation = startInstance.playerSpawn.rotation;
+        controller.enabled = true;
     }
 
 

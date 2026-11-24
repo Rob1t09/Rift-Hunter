@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class DifficultyPopup : MonoBehaviour
@@ -31,7 +32,7 @@ public class DifficultyPopup : MonoBehaviour
     {
         gameObject.SetActive(true);
         currentLocation = location;
-        titleText.text = location.DisplayName;
+        titleText.text = location.DisplayName + "\n Select your difficulty:";
         selectedDifficulty = location.MinDifficulty;
 
         BuildDifficultyButtons(location);
@@ -79,7 +80,8 @@ public class DifficultyPopup : MonoBehaviour
         Debug.Log($"Starting game at location: {currentLocation.DisplayName}, " +
             $"difficulty: {selectedDifficulty}");
 
-        gameObject.SetActive(false);
+        RunSettings.Set(currentLocation, selectedDifficulty);
+        SceneManager.LoadScene("DungeonMap");
     }
 
     private void OnCloseButtonClicked()

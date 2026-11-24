@@ -19,4 +19,4 @@ MonoBehaviour:
   requiredLocation:
   - {fileID: 11400000, guid: 15848afad32d5fc49a739fba811756f1, type: 2}
   - {fileID: 11400000, guid: dc218c0c7d3cc45489897a4fcb5f3d8d, type: 2}
-  minDifficulty: 3
+  minDifficulty: 4

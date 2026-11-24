@@ -18,4 +18,4 @@ MonoBehaviour:
   roomSet: {fileID: 11400000, guid: ea1fa97f0704e7f479390930e3ba320f, type: 2}
   requiredLocation:
   - {fileID: 11400000, guid: 043c61f976df9ca4a9615496df86086e, type: 2}
-  minDifficulty: 1
+  minDifficulty: 2
